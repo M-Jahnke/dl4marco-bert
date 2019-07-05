@@ -202,13 +202,6 @@ def convert_train_dataset(tokenizer):
       else:
         # skip num_lines
 
-		'''
-          write_to_tf_record(writer=writer,
-                             tokenizer=tokenizer,
-                             query=query,
-                             docs=[positive_doc, negative_doc],
-                             labels=[1, 0])
-		'''
   writer.close()
 
 
