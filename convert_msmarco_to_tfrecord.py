@@ -69,7 +69,7 @@ def write_to_tf_record(writer, tokenizer, query, docs, labels,
                        ids_file=None, query_id=None, doc_ids=None):
   query = tokenization.convert_to_unicode(query)
   query_token_ids = tokenization.convert_to_bert_input(
-      text=query, max_seq_length=FLAGS.max_query_length, tokenizer=tokenizer, 
+      text=query, max_seq_length=FLAGS.max_query_length, tokenizer=tokenizer,
       add_cls=True)
 
   query_token_ids_tf = tf.train.Feature(
@@ -114,7 +114,7 @@ def convert_eval_dataset(set_name, tokenizer):
   else:
     dataset_path = FLAGS.eval_dataset_path
 
-  queries_docs = collections.defaultdict(list)  
+  queries_docs = collections.defaultdict(list)
   query_ids = {}
   with open(dataset_path, 'r') as f:
     for i, line in enumerate(f):
@@ -150,8 +150,8 @@ def convert_eval_dataset(set_name, tokenizer):
 
       write_to_tf_record(writer=writer,
                          tokenizer=tokenizer,
-                         query=query, 
-                         docs=docs, 
+                         query=query,
+                         docs=docs,
                          labels=labels,
                          ids_file=ids_file,
                          query_id=query_id,
@@ -188,27 +188,27 @@ def convert_train_dataset(tokenizer):
         print('Estimated hours remaining to write the training set: {}'.format(
             hours_remaining))
 
-			if(len(line.rstrip().split('\t')) == 3):
-				query, positive_doc, negative_doc = line.rstrip().split('\t')
-				positive_docs = re.split('[.!?]', positive_doc)
-				negative_docs = re.split('[.!?]', negative_doc)
-				m_labels = [*([1] * len(positive_docs)), *([0] * len(negative_docs))] # extra fancy
-				
-				write_to_tf_record(writer=writer,
-                         tokenizer=tokenizer,
-                         query=query, 
-                         docs=[*positive_docs, *negative_docs], 
-                         labels=m_labels)
-			else:
-				# skip line
-			
-			'''
-      write_to_tf_record(writer=writer,
-                         tokenizer=tokenizer,
-                         query=query, 
-                         docs=[positive_doc, negative_doc], 
-                         labels=[1, 0])
-			'''
+		if(len(line.rstrip().split('\t')) == 3):
+			query, positive_doc, negative_doc = line.rstrip().split('\t')
+			positive_docs = re.split('[.!?]', positive_doc)
+			negative_docs = re.split('[.!?]', negative_doc)
+			m_labels = [*([1] * len(positive_docs)), *([0] * len(negative_docs))] # extra fancy
+
+			write_to_tf_record(writer=writer,
+                     tokenizer=tokenizer,
+                     query=query,
+                     docs=[*positive_docs, *negative_docs],
+                     labels=m_labels)
+		else:
+			# skip line
+
+		'''
+          write_to_tf_record(writer=writer,
+                             tokenizer=tokenizer,
+                             query=query,
+                             docs=[positive_doc, negative_doc],
+                             labels=[1, 0])
+		'''
   writer.close()
 
 
@@ -224,7 +224,7 @@ def main():
   convert_train_dataset(tokenizer=tokenizer)
   convert_eval_dataset(set_name='dev', tokenizer=tokenizer)
   convert_eval_dataset(set_name='eval', tokenizer=tokenizer)
-  print('Done!')  
+  print('Done!')
 
 if __name__ == '__main__':
   main()
