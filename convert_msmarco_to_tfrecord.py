@@ -188,19 +188,19 @@ def convert_train_dataset(tokenizer):
         print('Estimated hours remaining to write the training set: {}'.format(
             hours_remaining))
 
-		if(len(line.rstrip().split('\t')) == 3):
-			query, positive_doc, negative_doc = line.rstrip().split('\t')
-			positive_docs = re.split('[.!?]', positive_doc)
-			negative_docs = re.split('[.!?]', negative_doc)
-			m_labels = [*([1] * len(positive_docs)), *([0] * len(negative_docs))] # extra fancy
+      if(len(line.rstrip().split('\t')) == 3):
+        query, positive_doc, negative_doc = line.rstrip().split('\t')
+        positive_docs = re.split('[.!?]', positive_doc)
+        negative_docs = re.split('[.!?]', negative_doc)
+        m_labels = [*([1] * len(positive_docs)), *([0] * len(negative_docs))] # extra fancy
 
-			write_to_tf_record(writer=writer,
-                     tokenizer=tokenizer,
-                     query=query,
-                     docs=[*positive_docs, *negative_docs],
-                     labels=m_labels)
-		else:
-			# skip line
+        write_to_tf_record(writer=writer,
+             tokenizer=tokenizer,
+             query=query,
+             docs=[*positive_docs, *negative_docs],
+             labels=m_labels)
+      else:
+        # skip num_lines
 
 		'''
           write_to_tf_record(writer=writer,
