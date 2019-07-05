@@ -9,6 +9,7 @@ import tensorflow as tf
 import time
 # local module
 import tokenization
+import re
 
 
 flags = tf.flags
@@ -169,7 +170,6 @@ def convert_eval_dataset(set_name, tokenizer):
 
 def convert_train_dataset(tokenizer):
   print('Converting to Train to tfrecord...')
-
   start_time = time.time()
 
   print('Counting number of examples...')
@@ -188,14 +188,27 @@ def convert_train_dataset(tokenizer):
         print('Estimated hours remaining to write the training set: {}'.format(
             hours_remaining))
 
-      query, positive_doc, negative_doc = line.rstrip().split('\t')
-
+			if(len(line.rstrip().split('\t')) == 3):
+				query, positive_doc, negative_doc = line.rstrip().split('\t')
+				positive_docs = re.split('[.!?]', positive_doc)
+				negative_docs = re.split('[.!?]', negative_doc)
+				m_labels = [*([1] * len(positive_docs)), *([0] * len(negative_docs))] # extra fancy
+				
+				write_to_tf_record(writer=writer,
+                         tokenizer=tokenizer,
+                         query=query, 
+                         docs=[*positive_docs, *negative_docs], 
+                         labels=m_labels)
+			else:
+				# skip line
+			
+			'''
       write_to_tf_record(writer=writer,
                          tokenizer=tokenizer,
                          query=query, 
                          docs=[positive_doc, negative_doc], 
                          labels=[1, 0])
-
+			'''
   writer.close()
 
 
