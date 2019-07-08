@@ -107,7 +107,7 @@ def convert_eval_dataset(set_name, tokenizer):
   if set_name == 'dev':
     dataset_path = FLAGS.dev_dataset_path
     relevant_pairs = set()
-    with open(FLAGS.dev_qrels_path) as f:
+    with open(FLAGS.dev_qrels_path, encoding="utf8") as f:
       for line in f:
         query_id, _, doc_id, _ = line.strip().split('\t')
         relevant_pairs.add('\t'.join([query_id, doc_id]))
@@ -116,7 +116,7 @@ def convert_eval_dataset(set_name, tokenizer):
 
   queries_docs = collections.defaultdict(list)
   query_ids = {}
-  with open(dataset_path, 'r') as f:
+  with open(dataset_path, 'r', encoding="utf8") as f:
     for i, line in enumerate(f):
       query_id, doc_id, query, doc = line.strip().split('\t')
       label = 0
@@ -173,12 +173,13 @@ def convert_train_dataset(tokenizer):
   start_time = time.time()
 
   print('Counting number of examples...')
-  num_lines = sum(1 for line in open(FLAGS.train_dataset_path, 'r'))
+  print('looking at ', FLAGS.train_dataset_path)
+  num_lines = sum(1 for line in open(FLAGS.train_dataset_path, 'r', encoding="utf8"))
   print('{} examples found.'.format(num_lines))
   writer = tf.python_io.TFRecordWriter(
       FLAGS.output_folder + '/dataset_train.tf')
 
-  with open(FLAGS.train_dataset_path, 'r') as f:
+  with open(FLAGS.train_dataset_path, 'r', encoding="utf8") as f:
     for i, line in enumerate(f):
       if i % 1000 == 0:
         time_passed = int(time.time() - start_time)
@@ -199,9 +200,8 @@ def convert_train_dataset(tokenizer):
              query=query,
              docs=[*positive_docs, *negative_docs],
              labels=m_labels)
-      else:
+      #else:
         # skip num_lines
-
   writer.close()
 
 
@@ -214,7 +214,7 @@ def main():
   if not os.path.exists(FLAGS.output_folder):
     os.mkdir(FLAGS.output_folder)
 
-  convert_train_dataset(tokenizer=tokenizer)
+  #convert_train_dataset(tokenizer=tokenizer)
   convert_eval_dataset(set_name='dev', tokenizer=tokenizer)
   convert_eval_dataset(set_name='eval', tokenizer=tokenizer)
   print('Done!')
